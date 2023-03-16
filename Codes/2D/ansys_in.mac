@@ -1,0 +1,140 @@
+FINISH
+/CLEAR,NOSTART
+ALLSEL,ALL
+/PREP7 
+MP,EX,1,210000000000.000000
+MP,PRXY,1,0.300000
+MP,EX,2,13400000000.000000
+MP,EY,2,670000000.000000
+MP,EZ,2,911200000.000000
+MP,PRXY,2,0.292000
+MP,PRYZ,2,0.390000
+MP,PRXZ,2,0.449000
+MP,GXY,2,8.5760000000e+08
+MP,GYZ,2,9.3800000000e+07
+MP,GXZ,2,1.0452000000e+09
+ET,1,PLANE42
+KEYOPT,1,2,1
+ALLSEL,ALL 
+x = 1.200000
+y = 0.120000
+y_len = 0.006000
+RECTNG,0,x,0,y_len, 
+RECTNG,0,x,y/4-y_len/2,y/4+y_len/2, 
+RECTNG,0,x,2*y/4-y_len/2,2*y/4+y_len/2, 
+RECTNG,0,x,3*y/4-y_len/2,3*y/4+y_len/2, 
+RECTNG,0,x,4*y/4,4*y/4-y_len, 
+RECTNG,0,x,y_len,y/4-y_len/2, 
+RECTNG,0,x,y/4+y_len/2,2*y/4-y_len/2, 
+RECTNG,0,x,2*y/4+y_len/2,3*y/4-y_len/2, 
+RECTNG,0,x,3*y/4+y_len/2,4*y/4-y_len, 
+ALLSEL,ALL
+AGLUE,ALL  
+ALLSEL,ALL
+ESIZE,0.001000
+ALLSEL,ALL
+ASEL,S, , ,       1 
+ASEL,A, , ,       2 
+ASEL,A, , ,       3 
+ASEL,A, , ,       4 
+ASEL,A, , ,       5 
+MSHKEY,1
+AMESH,ALL
+*get,nelem,ELEM,0,count
+*get,nnode,NODE,0,count
+*CFOPEN,malha_stat,dat
+*VWRITE,nelem,nnode
+%.12e, %.12e
+*CFCLOS
+ESIZE,0.005000
+ALLSEL,ALL
+MSHKEY,1
+AMESH,ALL
+ALLSEL,ALL                        
+NSEL,R,LOC,X,-0.000001+x-30E-3,0.000001+x    
+NSEL,R,LOC,Y,-0.000001,0.000001  
+D,ALL, , , , , ,UY, , , , , 	
+ALLSEL,ALL                        
+NSEL,R,LOC,X,-0.000001,0.000001    
+NSEL,R,LOC,Y,-0.000001,0.000001+y  
+D,ALL, , , , , ,UX, , , , ,	
+ALLSEL,ALL                        
+NSEL,R,LOC,X,-0.000001,0.000001  
+NSEL,R,LOC,Y,-0.000001,0.000001  
+F,ALL,FY,-100 	
+ALLSEL,ALL 							
+ALLSEL,ALL                        
+MPCHG,2,ALL
+ALLSEL,ALL
+ALLSEL,ALL 
+/PAGE, 1E9,, 1E9,,
+/FORMAT, , ,14,5, ,
+/HEADER, off, off, off, off, on, off  
+/OUTPUT,NLIST,dat 
+NLIST,ALL, , , ,NODE,NODE,NODE  
+/OUTPUT 
+ALLSEL,ALL 
+/PAGE, 1E9,, 1E9,,
+/FORMAT, , ,14,5, ,
+/HEADER, off, off, off, off, on, off  
+/OUTPUT,ELIST,dat 
+ELIST,ALL, , , ,NODE,NODE,NODE  
+/OUTPUT 
+SAVE,Z_db,DB,,
+ALLSEL,ALL                        
+FINISH      
+/SOL 
+ANTYPE,0     
+EQSLV,PCG,1E-10    
+OUTRES,ERASE   
+OUTRES,ESOL,LAST 
+SOLVE   
+FINISH      
+/POST1
+SET,FIRST 
+*DIM,uxmatrix,array,nnode,1,
+*DIM,uymatrix,array,nnode,1,
+*DO,i,1,nnode               
+*get,uxmatrix(i),NODE,i,U,X 
+*get,uymatrix(i),NODE,i,U,Y 
+*enddo                      
+*CFOPEN,ux,dat
+*VWRITE,uxmatrix(1)
+%.15e
+*CFCLOS
+*CFOPEN,uy,dat
+*VWRITE,uymatrix(1)
+%.12e
+*CFCLOS
+etable, my_vol, volu 
+*VGET,element_volume,ELEM, ,ETAB,my_vol, , ,2
+*CFOPEN,ElementVolume,dat
+*VWRITE,element_volume(1)
+%.20e
+*CFCLOS
+ETABLE,cent_x,CENT,X  
+*VGET,my_cent_x,ELEM, ,ETAB,cent_x, , ,2 
+*CFOPEN,Centroid_x,dat 
+*VWRITE,my_cent_x(1) 
+%.20e
+*CFCLOS 
+ETABLE,cent_y,CENT,Y  
+*VGET,my_cent_y,ELEM, ,ETAB,cent_y, , ,2 
+*CFOPEN,Centroid_y,dat 
+*VWRITE,my_cent_y(1) 
+%.20e
+*CFCLOS 
+ETABLE,cent_z,CENT,Z  
+*VGET,my_cent_z,ELEM, ,ETAB,cent_z, , ,2 
+*CFOPEN,Centroid_z,dat 
+*VWRITE,my_cent_z(1) 
+%.20e
+*CFCLOS 
+ALLSEL,ALL 
+etable, my_sene, sene 
+*VGET,strain_energy,ELEM, ,ETAB,my_sene, , ,2
+*CFOPEN,SENE,dat
+*VWRITE,strain_energy(1)
+%.20f
+*CFCLOS
+FINISH      

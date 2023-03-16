@@ -1,0 +1,37 @@
+FINISH 
+/CLEAR,NOSTART
+RESUME,Z_db,DB,,SOLU
+/PREP7
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3,(bar_d/4)+dx/2+1E-3       
+VSEL,R,LOC,Y,0,dy        
+VSEL,R,LOC,Z,0,-dz        
+ESLV,S       
+MPCHG,1,ALL
+*get,nelem_sub_design,ELEM,0,count
+ALLSEL,ALL
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3+dx,(bar_d/4)+dx/2+1E-3+dx       
+VSEL,R,LOC,Y,0,dy        
+VSEL,R,LOC,Z,0,-dz        
+ESLV,S       
+MPCHG,2,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+/SOL 
+eqslv, sparse    
+EMATWRITE,1  
+SOLVE   
+FINISH      
+/aux2   
+combine, emat     
+FINISH      
+*do,i,1,nelem_sub_design                                 
+*dMAT, MatK1, D, import, emat, Z_db.emat, stiff,i      
+*dMAT, MatK2, D, import, emat, Z_db.emat, stiff,(nelem_sub_design+i)      
+str0 = strcat('./Ks/Kmatrix1_',chrval(i))      
+str1 = strcat(str0,'.dat')      
+str2 = strcat('./Ks/Kmatrix2_',chrval(i))      
+str3 = strcat(str2,'.dat')      
+*export, MatK1, MMF, str1    
+*export, MatK2, MMF, str3    
+*enddo      								  
+FINISH      

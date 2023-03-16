@@ -1,0 +1,25 @@
+FINISH 
+/CLEAR,NOSTART
+RESUME,Z_db,DB,,SOLU
+/PREP7
+ALLSEL,ALL
+ESEL,S, , ,       1 
+MPCHG,1,ALL
+ALLSEL,ALL
+ESEL,S, , ,       2 
+MPCHG,2,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+/SOL 
+eqslv, sparse    
+EMATWRITE,1  
+SOLVE   
+FINISH      
+/aux2   
+combine, emat     
+FINISH      
+*dMAT, MatK1, D, import, emat, Z_db.emat, stiff,1      
+*export, MatK1, MMF, matkMMF1.txt     
+*dMAT, MatK2, D, import, emat, Z_db.emat, stiff,2      
+*export, MatK2, MMF, matkMMF2.txt     
+FINISH      

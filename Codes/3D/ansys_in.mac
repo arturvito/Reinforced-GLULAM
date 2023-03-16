@@ -1,0 +1,201 @@
+FINISH
+/CLEAR,NOSTART
+ALLSEL,ALL
+/PREP7 
+MP,EX,1,210000000000.000000
+MP,PRXY,1,0.300000
+MP,EX,2,13400000000.000000
+MP,EY,2,670000000.000000
+MP,EZ,2,911200000.000000
+MP,PRXY,2,0.292000
+MP,PRYZ,2,0.390000
+MP,PRXZ,2,0.449000
+MP,GXY,2,8.5760000000e+08
+MP,GYZ,2,9.3800000000e+07
+MP,GXZ,2,1.0452000000e+09
+ET,1,SOLID185
+KEYOPT,1,2,2
+ALLSEL,ALL 
+x=   0.120000 
+y=   0.120000 
+z=   1.400000 
+dx=   0.030000 
+dy=   0.030000 
+dz=   0.200000 
+ndx=  4.000000 
+ndy=  4.000000 
+ndz=  7.000000 
+bar_d =  0.006000 
+RECTNG,-dx/2,dx/2,-dy/2,dy/2
+PCIRC,bar_d/2,,0,360          
+AOVLAP,ALL                  
+L,1,3 
+L,2,4 
+K,100,-dx,0       
+K,101,dx,0        
+K,102,0,dx        
+K,103,0,-dx       
+L,100,101         
+L,102,103         
+ASBL,ALL,ALL      
+VEXT,ALL,,,0,0,-dz
+VGLUE,ALL         
+VGEN,ndx,ALL,,,dx                           
+VGEN,ndy,ALL,,,,dy                          
+VGEN,ndz,ALL,,,,,-dz                         
+VGLUE,ALL                                   
+VGEN, ,ALL, , ,dx/2,dy/2 , , , ,1          
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3,(bar_d/4)+1E-3 +dx/2       
+*do,i,2,ndx                                 
+    VSEL,A,LOC,x,(i-1)*dx+dx/2+(-(bar_d/4)-1E-3),(i-1)*dx+dx/2+((bar_d/4)+1E-3)		
+*enddo      								  
+AESIZE,ALL,5E-3            				  
+MSHAPE,0,3d
+MSHKEY,1   
+VMESH,ALL  
+ALLSEL,ALL
+MPCHG,2,ALL
+ALLSEL,ALL
+*get,nelem_bar,ELEM,0,count
+*get,nnode_bar,NODE,0,count
+*CFOPEN,malha_stat_bar,dat
+*VWRITE,nelem_bar,nnode_bar
+%.12e, %.12e
+*CFCLOS
+ALLSEL,ALL 
+VMESH,ALL
+*get,nelem,ELEM,0,count
+*get,nnode,NODE,0,count
+*CFOPEN,malha_stat,dat
+*VWRITE,nelem,nnode
+%.12e, %.12e
+*CFCLOS
+ALLSEL,ALL
+NSEL,R,LOC,X,-0.000001,+0.000001+x   
+NSEL,R,LOC,Y,-0.000001,+0.000001   
+NSEL,R,LOC,Z,-0.000001-z,+0.000001-z+50E-3  
+D,ALL, ,0, , , ,ALL, , , , ,  	
+ALLSEL,ALL                        
+NSEL,R,LOC,X,-0.000001,+0.000001+x  
+NSEL,R,LOC,Y,-0.000001,+0.000001+y   
+NSEL,R,LOC,Z,-0.000001,+0.000001  
+D,ALL, , , , , ,UZ, , , , ,	
+ALLSEL,ALL
+MPCHG,2,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3+x/4,(bar_d/4)+dx/2+1E-3+x/4 
+VSEL,R,LOC,Y,2*y/4,3*y/4 
+ESLV,S     
+MPCHG,1,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3+2*x/4,(bar_d/4)+dx/2+1E-3+2*x/4 
+VSEL,R,LOC,Y,2*y/4,3*y/4 
+ESLV,S     
+MPCHG,1,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3+x/4,(bar_d/4)+dx/2+1E-3+x/4 
+VSEL,R,LOC,Y,y/4,2*y/4 
+ESLV,S     
+MPCHG,1,ALL
+ALLSEL,ALL
+ALLSEL,ALL
+VSEL,S,LOC,x,dx/2-(bar_d/4)-1E-3+2*x/4,(bar_d/4)+dx/2+1E-3+2*x/4 
+VSEL,R,LOC,Y,y/4,2*y/4 
+ESLV,S     
+MPCHG,1,ALL
+ALLSEL,ALL
+ALLSEL,ALL 
+/PAGE, 1E9,, 1E9,,
+/FORMAT, , ,14,5, ,
+/HEADER, off, off, off, off, on, off  
+/OUTPUT,NLIST,dat 
+NLIST,ALL, , , ,NODE,NODE,NODE  
+/OUTPUT 
+ALLSEL,ALL 
+/PAGE, 1E9,, 1E9,,
+/FORMAT, , ,14,5, ,
+/HEADER, off, off, off, off, on, off  
+/OUTPUT,ELIST,dat 
+ELIST,ALL, , , ,NODE,NODE,NODE  
+/OUTPUT 
+FINISH      
+/SOL 
+ALLSEL,ALL                        
+NSEL,R,LOC,X,-0.000001,+0.000001+x  
+NSEL,R,LOC,Y,-0.000001+y,+0.000001+y  
+NSEL,R,LOC,Z,-0.000001-z/4,+0.000001-z/4  
+*get,forcenodes,node,,count  
+x_i = x/(forcenodes-1)     								
+pi = 3.141592653589793238				                    
+                                                          
+*do,i,1,forcenodes                                        
+	ALLSEL,ALL                                              
+	NSEL,R,LOC,X,-0.000001+(x_i*(i-1)),+0.000001+(x_i*(i-1))
+	NSEL,R,LOC,Y,-0.000001+y,+0.000001+y                    
+	NSEL,R,LOC,Z,-0.000001-z/4,+0.000001-z/4  				
+    F,ALL,FY,sin((pi/16)*(i-1))*1000                      
+*enddo                                                    
+ALLSEL,ALL 							
+ANTYPE,0     
+EQSLV,PCG,1E-10    
+SOLVE   
+FINISH      
+/POST1
+SAVE,Z_db,DB,,SOLU
+/POST1
+SET,FIRST 
+*DIM,uxmatrix,array,nnode,1,
+*DIM,uymatrix,array,nnode,1,
+*DIM,uzmatrix,array,nnode,1,
+*DO,i,1,nnode               
+*get,uxmatrix(i),NODE,i,U,X 
+*get,uymatrix(i),NODE,i,U,Y 
+*get,uzmatrix(i),NODE,i,U,Z 
+*enddo                      
+*CFOPEN,ux,dat
+*VWRITE,uxmatrix(1)
+%.15e
+*CFCLOS
+*CFOPEN,uy,dat
+*VWRITE,uymatrix(1)
+%.12e
+*CFCLOS
+*CFOPEN,uz,dat
+*VWRITE,uzmatrix(1)
+%.12e
+*CFCLOS
+ALLSEL,ALL 
+etable, my_sene, sene 
+*VGET,strain_energy,ELEM, ,ETAB,my_sene, , ,2
+*CFOPEN,SENE,dat
+*VWRITE,strain_energy(1)
+%.20f
+*CFCLOS
+etable, my_vol, volu 
+*VGET,element_volume,ELEM, ,ETAB,my_vol, , ,2
+*CFOPEN,ElementVolume,dat
+*VWRITE,element_volume(1)
+%.20e
+*CFCLOS
+ETABLE,cent_x,CENT,X  
+*VGET,my_cent_x,ELEM, ,ETAB,cent_x, , ,2 
+*CFOPEN,Centroid_x,dat 
+*VWRITE,my_cent_x(1) 
+%.20e
+*CFCLOS 
+ETABLE,cent_y,CENT,Y  
+*VGET,my_cent_y,ELEM, ,ETAB,cent_y, , ,2 
+*CFOPEN,Centroid_y,dat 
+*VWRITE,my_cent_y(1) 
+%.20e
+*CFCLOS 
+ETABLE,cent_z,CENT,Z  
+*VGET,my_cent_z,ELEM, ,ETAB,cent_z, , ,2 
+*CFOPEN,Centroid_z,dat 
+*VWRITE,my_cent_z(1) 
+%.20e
+*CFCLOS 
+FINISH      
